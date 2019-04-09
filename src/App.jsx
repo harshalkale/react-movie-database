@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import Axios from 'axios';
 import { API_URL } from './config';
 
-import './App.css';
-
 class App extends Component {
   state = {
     isSearching: false,
@@ -55,7 +53,9 @@ class App extends Component {
     }));
   };
 
-  handleSearch = async () => {
+  handleSearch = async evt => {
+    evt.preventDefault();
+
     await this.setState(prevState => ({
       ...prevState,
       searchedMovies: [],
@@ -104,34 +104,30 @@ class App extends Component {
       <>
         <nav className="navbar navbar-dark bg-dark">
           <div className="container">
-            <div className="text-light">Movie Database</div>
+            <div className="w-100 text-light text-center">Movie Database</div>
           </div>
         </nav>
         <div className="my-4 container">
           <div className="card">
             <div className="card-body">
-              <div className="d-flex">
+              <form className="d-flex" onSubmit={evt => this.handleSearch(evt)}>
                 <input
                   type="text"
                   className="form-control flex-grow mr-4"
                   placeholder="Enter a movie title"
                   onChange={this.handleChange}
                 />
-                <button className="btn btn-primary" onClick={this.handleSearch}>
+                <button type="submit" className="btn btn-primary">
                   Search
                 </button>
-              </div>
+              </form>
             </div>
           </div>
-          <div className="row">
+          <div className="row justify-content-center">
             {searchedMovies.map(({ imdbID, Poster, Title, Type, Year }) => (
-              <div className="p-3 col-md-3 col-sm-4 col-xs-6">
-                <div key={imdbID} className="card w-100 h-100">
-                  <img
-                    src={Poster}
-                    className="card-img-top img-thumbnail"
-                    alt={Title}
-                  />
+              <div key={imdbID} className="p-3 col-md-3 col-sm-4 col-xs-6">
+                <div className="card w-100 h-100">
+                  <img src={Poster} className="card-img-top" alt={Title} />
                   <div className="card-body">
                     <b>{Title}</b>
                     <div className="d-flex flex-row">
@@ -150,9 +146,13 @@ class App extends Component {
           {isSearching && <div className="text-center">Loading....</div>}
 
           {searchedMovies.length < totalResults && (
-            <button className="btn btn-secondary" onClick={this.nextPage}>
-              Next
-            </button>
+            <div className="py-2 d-flex flex-row-reverse">
+              <button
+                className="btn btn-secondary"
+                onClick={this.nextPage}>
+                Next
+              </button>
+            </div>
           )}
         </div>
       </>
